@@ -1,4 +1,4 @@
-public class StarPattern {
+public class SeatworkSix {
 
 public static void main(String[] args) {
 
