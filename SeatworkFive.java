@@ -1,4 +1,4 @@
-public class Sw5 {
+public class SeatworkFive {
 public static void main(String[] args) {
     int countdown = 3;
 
