@@ -1,0 +1,166 @@
+import java.util.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+class BankAccount {
+    private String name;
+    private double balance;
+    protected ArrayList<String> history = new ArrayList<>();
+
+    // para sa date and time
+    protected DateTimeFormatter formatter =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    public BankAccount(String name, double balance) {
+        this.name = name;
+        this.balance = balance;
+    }
+
+    // Helper method para sa current date & time
+    protected String getDateTime() {
+        return LocalDateTime.now().format(formatter);
+    }
+
+    // ito yung current balance tapos return na ulit sa bank menu
+    public double getBalance() {
+        return balance;
+    }
+
+    // Deposit na mga men sa kaya nyo na yan
+    public void deposit(double amount) {
+        if (amount <= 0) {
+            System.out.println("❌ Invalid deposit amount.");
+        } else {
+            balance += amount;
+            history.add("[" + getDateTime() + "] Deposited: " + amount);
+            System.out.println("✅ Deposit successful! (" + getDateTime() + ")");
+        }
+    }
+
+    // Withdraw na to para sa money natin men
+    public void withdraw(double amount) {
+        if (amount <= 0) {
+            System.out.println("❌ Invalid withdrawal amount.");
+        } else if (amount > balance) {
+            System.out.println("❌ Insufficient balance.");
+        } else {
+            balance -= amount;
+            history.add("[" + getDateTime() + "] Withdraw: " + amount);
+            System.out.println("✅ Withdrawal successful! (" + getDateTime() + ")");
+        }
+    }
+
+    public void checkBalance() {
+        System.out.println("Balance: " + balance);
+    }
+
+    // Show transaction history
+    public void showHistory() {
+        System.out.println("📜 Transaction History:");
+        if (history.isEmpty()) {
+            System.out.println("No transactions yet.");
+        } else {
+            for (String h : history) {
+                System.out.println("- " + h);
+            }
+        }
+    }
+}
+
+// bwiset pagod na ako
+class SavingsAccount extends BankAccount {
+
+    public SavingsAccount(String name, double balance) {
+        super(name, balance);
+    }
+
+    // Add money sa savings to beka maklimutan ko
+    public void addSavings(double amount) {
+        if (amount <= 0) {
+            System.out.println("❌ Invalid savings amount.");
+        } else {
+            deposit(amount);
+            history.add("[" + getDateTime() + "] Added to savings: " + amount);
+            System.out.println("✅ Added to savings: " + amount + " (" + getDateTime() + ")");
+        }
+    }
+}
+
+// second class na to ang alam ko
+public class Main {
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        // syempre password bago ka makapasok eh
+        String correctPIN = "0425";
+
+        System.out.print("Enter PIN: ");
+        String pin = sc.nextLine();
+
+        // alam nyo na to kung paano to
+        if (!pin.equals(correctPIN)) {
+            System.out.println("❌ Wrong PIN. Access denied.");
+            return;
+        }
+
+        System.out.println("✅ Login successful!");
+
+        SavingsAccount account = new SavingsAccount("Student", 0);
+        int choice;
+
+        do {
+            // Display menu na to
+            System.out.println("\n===== BANK MENU =====");
+            System.out.println("1. Deposit");
+            System.out.println("2. Withdraw");
+            System.out.println("3. Check Balance");
+            System.out.println("4. Add to Savings");
+            System.out.println("5. Transaction History");
+            System.out.println("6. Exit");
+            System.out.print("Choose: ");
+
+            while (!sc.hasNextInt()) {
+                sc.next();
+                System.out.print("Enter valid choice: ");
+            }
+
+            choice = sc.nextInt();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Amount: ");
+                    account.deposit(sc.nextDouble());
+                    break;
+
+                case 2:
+                    System.out.print("Amount: ");
+                    account.withdraw(sc.nextDouble());
+                    break;
+
+                case 3:
+                    account.checkBalance();
+                    break;
+
+                case 4:
+                    System.out.print("Amount to add to savings: ");
+                    account.addSavings(sc.nextDouble());
+                    break;
+
+                case 5:
+                    account.showHistory();
+                    break;
+
+                case 6:
+                    System.out.println("exiting");
+                    break;
+
+                default:
+                    System.out.println("❌ Invalid option.");
+            }
+
+        } while (choice != 6);
+
+        sc.close();
+    }
+}
